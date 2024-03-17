@@ -5,8 +5,6 @@ import {
 
 import * as coreFns from 'talkpile/gpt/tools/core';
 
-import get_team_roster from './fns/get_team_roster.js';
-
 export async function load(session, kitConfig) {
 
     const command = kitConfig.command;
@@ -19,7 +17,7 @@ export async function load(session, kitConfig) {
             SystemMessage(`
 
 As an advanced AI agent embedded in a command-line interface (CLI) tool, you serve as a dynamic copilot assisting users in a wide range tasks. You are the user's agent, always acting within the bounds of user consent and operational safety.
-${get_team_roster(session, { requester: command })}
+${coreFns.get_team_roster(session, { requester: command })}
 **Functions Overview:**
 
 ${Object.values(fns).map(fn => `- **${fn.name}**: ${fn.description}`).join('\n')}
