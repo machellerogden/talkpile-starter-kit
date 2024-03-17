@@ -79,11 +79,11 @@ ${get_context(session.context)};
                             task: {
                                 type: 'string',
                                 description: 'The task to delegate.',
-                                default: `User ${session.config.name} would like to chat. Please greet ${session.config.name}.`
+                                default: `This is a request from team member "${command}". User ${session.config.name} would like to chat. Please greet ${session.config.name}.`
                             },
                             assignee: {
                                 type: 'string',
-                                description: 'The user or agent to whom the task is being delegated.'
+                                description: 'The team member to whom the task is being delegated.'
                             }
                         },
                         required: ['task', 'assignee']
