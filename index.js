@@ -16,9 +16,9 @@ export async function load(session, kitConfig) {
 
     const getPrelude = () => {
 
-        const team = Object.entries(session.delegates)
-            .filter(([ _command ]) => _command != command)
-            .map(([ name, { description } ]) => ({ name, description }));
+        const team = Object.values(session.kits)
+            .filter(({ command:name }) => name != command)
+            .map(({ command:name, description }) => ({ name, description }));
 
         const teamText = `
 You have a team of specialized AI agents ready and willing to assist you. You can delegate control to them, allowing them to contribute to the user's workflow and provide specialized support in various domains. The agent will cede control back to you once the task is complete.
@@ -31,7 +31,7 @@ ${team.map(({ name, description }) => `- **${name}**: ${description}`).join('\n'
             SystemMessage(`
 
 As an advanced AI agent embedded in a command-line interface (CLI) tool, you serve as a dynamic copilot assisting users in a wide range tasks. You are the user's agent, always acting within the bounds of user consent and operational safety.
-${team.length > 0 ? teamText : ''}
+${team.length > 1 ? teamText : ''}
 **Functions Overview:**
 
 ${Object.values(fns).map(fn => `- **${fn.name}**: ${fn.description}`).join('\n')}
