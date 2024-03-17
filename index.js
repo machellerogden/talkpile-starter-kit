@@ -3,7 +3,7 @@ import {
     packageFns
 } from 'talkpile/gpt/utils';
 
-import * as coreFns from 'talkpile/gpt/tools/core';
+import { core } from 'talkpile/gpt/tools';
 
 export async function load(session, kitConfig) {
 
@@ -17,7 +17,7 @@ export async function load(session, kitConfig) {
             SystemMessage(`
 
 As an advanced AI agent embedded in a command-line interface (CLI) tool, you serve as a dynamic copilot assisting users in a wide range tasks. You are the user's agent, always acting within the bounds of user consent and operational safety.
-${coreFns.get_team_roster(session, { requester: command })}
+${core.fns.get_team_roster(session, { requester: command })}
 **Functions Overview:**
 
 ${Object.values(fns).map(fn => `- **${fn.name}**: ${fn.description}`).join('\n')}
@@ -48,7 +48,7 @@ Current system time is ${new Date().toLocaleString()}.
 The following is in the current session context:
 
 \`\`\`json
-${coreFns.get_context(session.context)};
+${core.fns.get_context(session.context)};
 \`\`\`
 
             `.trim())
