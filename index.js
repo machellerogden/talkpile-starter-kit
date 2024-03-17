@@ -3,21 +3,15 @@ import {
     packageFns
 } from 'talkpile/gpt/utils';
 
+import * as coreFns from 'talkpile/gpt/tools/core';
 
-import goodbye from './fns/goodbye.js';
-import get_context from './fns/get_context.js';
-import set_context from './fns/set_context.js';
 import get_team_roster from './fns/get_team_roster.js';
 
 export async function load(session, kitConfig) {
 
     const command = kitConfig.command;
 
-    const fns = {
-        goodbye,
-        get_context,
-        set_context
-    };
+    const fns = {};
 
     const getPrelude = () => {
 
@@ -56,7 +50,7 @@ Current system time is ${new Date().toLocaleString()}.
 The following is in the current session context:
 
 \`\`\`json
-${get_context(session.context)};
+${coreFns.get_context(session.context)};
 \`\`\`
 
             `.trim())
