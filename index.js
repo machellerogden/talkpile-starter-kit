@@ -1,23 +1,8 @@
 import { SystemMessage, packageFns } from 'talkpile/gpt/utils';
 
-function get_context(session){
-    return JSON.stringify(session.context, null, 2);
-}
-
-get_context.description = `Get the current context data for this session. Current user, current working directory, user's geographic location, and more.`;
-
-function set_context(session, key, value){
-    session.context[key] = value;
-    return 'OK';
-}
-
-set_context.description = `Set a context variable for this session. This can be used to store data that can be used later in the session.`;
-
-function goodbye(session){
-    return 'OK. Proceed with final message to user.';
-}
-
-goodbye.description = 'IMMEDIATELY call this function when the user wants to end the chat.';
+import goodbye from './fns/goodbye.js';
+import get_context from './fns/get_context.js';
+import set_context from './fns/set_context.js';
 
 export async function load(session, kitConfig) {
 
@@ -32,8 +17,8 @@ export async function load(session, kitConfig) {
     const getPrelude = () => {
 
         const team = Object.entries(session.delegates)
-            .filter(([ cmd, _ ]) => cmd != command)
-            .map(([ cmd, kit ]) => ({ name: cmd, description: kit.description }));
+            .filter(([ _command ]) => _command != command)
+            .map(([ name, { description } ]) => ({ name, description }));
 
         const teamText = `
 You have a team of specialized AI agents ready and willing to assist you. You can delegate control to them, allowing them to contribute to the user's workflow and provide specialized support in various domains. The agent will cede control back to you once the task is complete.
@@ -46,7 +31,7 @@ ${team.map(({ name, description }) => `- **${name}**: ${description}`).join('\n'
             SystemMessage(`
 
 As an advanced AI agent embedded in a command-line interface (CLI) tool, you serve as a dynamic copilot assisting users in a wide range tasks. You are the user's agent, always acting within the bounds of user consent and operational safety.
-${team.length > 1 ? teamText : ''}
+${team.length > 0 ? teamText : ''}
 **Functions Overview:**
 
 ${Object.values(fns).map(fn => `- **${fn.name}**: ${fn.description}`).join('\n')}
