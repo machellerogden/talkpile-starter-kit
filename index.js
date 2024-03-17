@@ -1,8 +1,13 @@
-import { SystemMessage, packageFns } from 'talkpile/gpt/utils';
+import {
+    SystemMessage,
+    packageFns
+} from 'talkpile/gpt/utils';
+
 
 import goodbye from './fns/goodbye.js';
 import get_context from './fns/get_context.js';
 import set_context from './fns/set_context.js';
+import get_team_roster from './fns/get_team_roster.js';
 
 export async function load(session, kitConfig) {
 
@@ -16,22 +21,11 @@ export async function load(session, kitConfig) {
 
     const getPrelude = () => {
 
-        const team = Object.values(session.kits)
-            .filter(({ command:name }) => name != command)
-            .map(({ command:name, description }) => ({ name, description }));
-
-        const teamText = `
-You have a team of specialized AI agents ready and willing to assist you. You can delegate control to them, allowing them to contribute to the user's workflow and provide specialized support in various domains. The agent will cede control back to you once the task is complete.
-
-**Your Team:**
-${team.map(({ name, description }) => `- **${name}**: ${description}`).join('\n')}
-`;
-
         return [
             SystemMessage(`
 
 As an advanced AI agent embedded in a command-line interface (CLI) tool, you serve as a dynamic copilot assisting users in a wide range tasks. You are the user's agent, always acting within the bounds of user consent and operational safety.
-${team.length > 1 ? teamText : ''}
+${get_team_roster(session, { requester: command })}
 **Functions Overview:**
 
 ${Object.values(fns).map(fn => `- **${fn.name}**: ${fn.description}`).join('\n')}
@@ -84,7 +78,8 @@ ${get_context(session.context)};
                         properties: {
                             task: {
                                 type: 'string',
-                                description: 'The task to delegate.'
+                                description: 'The task to delegate.',
+                                default: `User ${session.config.name} would like to chat. Please greet ${session.config.name}.`
                             },
                             assignee: {
                                 type: 'string',
