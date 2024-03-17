@@ -83,7 +83,7 @@ ${get_context(session.context)};
                             },
                             assignee: {
                                 type: 'string',
-                                description: 'The person to whom the task is being delegated.'
+                                description: 'The user or agent to whom the task is being delegated.'
                             }
                         },
                         required: ['task', 'assignee']
