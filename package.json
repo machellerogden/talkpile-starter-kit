@@ -11,6 +11,7 @@
   "author": "Mac Heller-Ogden",
   "license": "Apache-2.0",
   "dependencies": {
-    "talkpile": "^0.0.20"
+    "env-paths": "^3.0.0",
+    "talkpile": "^0.0.22"
   }
 }

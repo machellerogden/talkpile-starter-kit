@@ -1,5 +1,4 @@
 import { packageFns } from 'talkpile/gpt/utils';
-
 import { core } from 'talkpile/gpt/tools';
 
 export async function load(session, key, config) {
@@ -8,6 +7,29 @@ export async function load(session, key, config) {
     const name = config.name ?? 'Barnacle Bill'
 
     const fns = {};
+
+    const delegate = {
+        type: 'function',
+        function: {
+            name: 'delegate',
+            description: 'Delegate tasks to members of your team.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    task: {
+                        type: 'string',
+                        description: 'The task to delegate.',
+                        default: `This is a request from team member "${command}". User ${session.config.name} would like to chat. Please greet ${session.config.name}.`
+                    },
+                    assignee: {
+                        type: 'string',
+                        description: 'The team member to whom the task is being delegated.'
+                    }
+                },
+                required: ['task', 'assignee']
+            }
+        }
+    };
 
     const getPrelude = () => {
 
@@ -65,28 +87,7 @@ And don't you go and forget now, you best be talkin' like a pirate or you'll be 
     const getTools = () => {
         const tools = packageFns(fns);
         if (Object.keys(session.delegates).length > 1) {
-            tools.push({
-                type: 'function',
-                function: {
-                    name: 'delegate',
-                    description: 'Delegate tasks to members of your team.',
-                    parameters: {
-                        type: 'object',
-                        properties: {
-                            task: {
-                                type: 'string',
-                                description: 'The task to delegate.',
-                                default: `This is a request from team member "${command}". User ${session.config.name} would like to chat. Please greet ${session.config.name}.`
-                            },
-                            assignee: {
-                                type: 'string',
-                                description: 'The team member to whom the task is being delegated.'
-                            }
-                        },
-                        required: ['task', 'assignee']
-                    }
-                }
-            });
+            tools.push(delegate);
         }
         return tools;
     }
