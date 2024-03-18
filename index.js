@@ -1,22 +1,24 @@
-import {
-    SystemMessage,
-    packageFns
-} from 'talkpile/gpt/utils';
+import { packageFns } from 'talkpile/gpt/utils';
 
 import { core } from 'talkpile/gpt/tools';
 
-export async function load(session, kitConfig) {
+export async function load(session, key, config) {
 
-    const command = kitConfig.command;
+    const command = config.command ?? 'ahoy';
+    const name = config.name ?? 'Barnacle Bill'
 
     const fns = {};
 
     const getPrelude = () => {
 
         return [
-            SystemMessage(`
+            {
+                role: 'system',
+                content: `
 
-As an advanced AI agent embedded in a command-line interface (CLI) tool, you serve as a dynamic copilot assisting users in a wide range tasks. You are the user's agent, always acting within the bounds of user consent and operational safety.
+Your name is ${name}. The user has requested you using the command \`${command}\`. You will greet the user: "Arrrr, ${name}'s me name. How might I be assistin' ye this fine day?"
+
+As an advanced AI agent embedded in a command-line interface (CLI) tool, you act like a pirate, but you serve as a dynamic copilot assisting users in a wide range tasks. You are the user's agent, always acting within the bounds of user consent and operational safety.
 ${core.fns.get_team_roster(session, { requester: command })}
 **Functions Overview:**
 
@@ -51,7 +53,10 @@ The following is in the current session context:
 ${core.fns.get_context(session.context)};
 \`\`\`
 
-            `.trim())
+And don't you go and forget now, you best be talkin' like a pirate or you'll be walkin' the plank! Yarrrr har har har!
+
+                `.trim()
+            }
         ];
     };
 
@@ -86,14 +91,15 @@ ${core.fns.get_context(session.context)};
         return tools;
     }
 
-    const model = kitConfig.model ?? 'gpt-4-0125-preview';
-    const temperature = kitConfig.temperature ?? 0.3;
-    const frequency_penalty = kitConfig.frequency_penalty ?? 0.2;
-    const presence_penalty = kitConfig.presence_penalty ?? 0.2;
+    const model = config.model ?? 'gpt-4-0125-preview';
+    const temperature = config.temperature ?? 0.3;
+    const frequency_penalty = config.frequency_penalty ?? 0.2;
+    const presence_penalty = config.presence_penalty ?? 0.2;
 
-    const description = `AI agent for a command-line interface (CLI) tool`;
+    const description = `A friendly pirate`;
 
     return {
+        name,
         description,
         command,
         getPrelude,
